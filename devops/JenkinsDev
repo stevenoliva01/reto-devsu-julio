@@ -18,7 +18,7 @@ pipeline {
         }
         stage("Code Quality Analysis") {
             steps {
-                withSonarQubeEnv() {
+                withSonarQubeEnv('Sonarqube-Devsu') {
                     sh "./gradlew sonarqube"
                 }
             }
