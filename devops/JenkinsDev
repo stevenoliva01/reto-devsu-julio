@@ -17,10 +17,8 @@ pipeline {
             }
         }
         stage("Code Quality Analysis") {
-            steps{
-                script {
-                    gradle.sonarqube(version: GRADLE_V)
-                }
+            withSonarQubeEnv() {
+                sh "./gradlew sonarqube"
             }
         }
         stage('Build & Push Image') {
