@@ -3,7 +3,8 @@ pipeline {
         label 'built-in'
     }
     environment {
-        ENVIRONMENT         = 'prod'
+        ENVIRONMENT     = 'prod'
+        IMAGE_TAG       = 'latest'
     }
     stages {
         stage("Prepare"){
@@ -13,7 +14,7 @@ pipeline {
                 }
             }
         }
-        /*stage("Code Quality Analysis") {
+        stage("Code Quality Analysis") {
             steps {
                 sh("chmod +x gradlew")
                 withSonarQubeEnv('Sonarqube-Devsu') {
@@ -25,14 +26,14 @@ pipeline {
         stage('Build & Push Image') {
             steps {
                 script{
-                    dockerImage = docker.build config.DOCKER_REGISTRY + ":${env.BUILD_ID}"
+                    dockerImage = docker.build config.DOCKER_REGISTRY + ":${IMAGE_TAG}"
                     docker.withRegistry('',config.DOCKER_REGISTRY_CREDENTIALS) {
                         dockerImage.push()
-                        sh "docker rmi ${config.DOCKER_REGISTRY}:${env.BUILD_ID}"
+                        sh "docker rmi ${config.DOCKER_REGISTRY}:${IMAGE_TAG}"
                     }
                 }
             }
-        }*/
+        }
         stage('Deploy K8s') {
             steps {
                 withCredentials([azureServicePrincipal(config.AZ_K8S_KEY)]) {
