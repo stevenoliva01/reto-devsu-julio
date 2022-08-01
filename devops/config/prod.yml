@@ -1,0 +1,3 @@
+DOCKER_REGISTRY_CREDENTIALS: id-docker-hub
+DOCKER_REGISTRY: stevenoliva/devsu-pichincha
+AZ_K8S_KEY: jenkins-credentials-kubernetes
