@@ -31,7 +31,7 @@ pipeline {
                     dockerImage = docker.build config.DOCKER_REGISTRY + ":${env.BUILD_ID}"
                     docker.withRegistry('',config.DOCKER_REGISTRY_CREDENTIALS) {
                         dockerImage.push()
-                        sh "docker rmi config.DOCKER_REGISTRY:${env.BUILD_ID}"
+                        sh "docker rmi ${config.DOCKER_REGISTRY}:${env.BUILD_ID}"
                     }
                 }
             }
