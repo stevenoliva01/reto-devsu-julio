@@ -1,7 +1,0 @@
-package com.app.devsu.util;
-
-public class Constantes {
-
-    public static final String API_KEY = "2f5ae96c-b558-4c7b-a590-a501ae1c3f6c";
-
-}
