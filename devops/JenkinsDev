@@ -3,7 +3,6 @@ pipeline {
         label 'built-in'
     }
     environment {
-        K8S_NAMESPACE       = 'dev'
         ENVIRONMENT         = 'dev'
     }
     stages {
@@ -43,28 +42,6 @@ pipeline {
                 }                   
             }
         }
-        /*stage("Deploy") {
-            steps {
-                script {
-                    deploy.k8s(
-                        config: config.K8S_CONFIG_CID,
-                        registryServer: config.REGISTRY_SERVER,
-                        imageName: SERVICE_NAME,
-                        tag: IMAGE_TAG,
-                        profile: ENVIRONMENT,
-                        namespace: K8S_NAMESPACE,
-                        maxReplica: "2"
-                    )
-                }
-            }
-        }
-        stage('Deploy to APIM') {
-            steps {
-                script {
-                    sh 'az apim api import -g rg-devsu-dev-centralUs-001 --service-name apim-devsu-dev-centralUs-001 --subscription-key-header-name X-Parse-REST-API-Key --subscription-key-query-param-name subscription-key --api-id openapi-definition-dev --api-version dev --api-version-set-id 62ca714fb19f79aae4479f96 --path / --specification-url http://20.96.236.6/v3/api-docs.yaml --specification-format OpenApiJson'
-                }                   
-            }
-        }*/
     }
     post { 
         always { 
