@@ -4,9 +4,7 @@ pipeline {
     }
     environment {
         K8S_NAMESPACE       = 'dev'
-        AZ_K8S_KEY_ID       = 'jenkins-user-for-k8s-azure'
         ENVIRONMENT         = 'dev'
-        GRADLE_V            = '6.9.0-jdk11'
     }
     stages {
         stage("Prepare"){
@@ -36,17 +34,15 @@ pipeline {
                 }
             }
         }
-        /*stage('Deploy to Kubernetes') {
+        stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([azureServicePrincipal(AZ_K8S_KEY_ID)]) {
+                withCredentials([azureServicePrincipal(config.AZ_K8S_KEY)]) {
                     sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
-                    sh 'az aks get-credentials --resource-group rg-devsu-dev-centralUs-001 --name aks-devsu-dev-centralUs-001 --subscription ae272f53-0ce5-4e22-9041-f236c379f851'
-                    sh 'kubectl apply -f ./kubernetes/api_deployment.yml -n nsdevsu-dev'
-                    sh 'kubectl rollout restart deployment/devsuprueba-dev -n nsdevsu-dev'
-                    sh 'sleep 10'
+                    sh 'az aks get-credentials --resource-group Devsu --name aksdevsucluster --subscription 6c26738b-b5d9-4cb1-985e-51558f10f375'
+                    sh 'kubectl apply -f ./k8s.yml -n devsu'
                 }                   
             }
-        }*/
+        }
         /*stage("Deploy") {
             steps {
                 script {
