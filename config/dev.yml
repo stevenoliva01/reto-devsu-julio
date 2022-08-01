@@ -1,0 +1,2 @@
+DOCKER_REGISTRY_CREDENTIALS: test-spring-boot-docker
+DOCKER_REGISTRY: stevenoliva/devsu-pichincha

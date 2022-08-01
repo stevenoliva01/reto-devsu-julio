@@ -1,0 +1,76 @@
+pipeline {
+    agent {
+        label 'built-in'
+    }
+    environment {
+        K8S_NAMESPACE       = 'dev'
+        AZ_K8S_KEY_ID       = 'jenkins-user-for-k8s-azure'
+        ENVIRONMENT         = 'dev'
+        GRADLE_V            = '6.9.0-jdk11'
+    }
+    stages {
+        stage("Prepare"){
+            steps {
+                script {
+                    config = readYaml file: "./devops/config/${ENVIRONMENT}.yml"
+                }
+            }
+        }
+        stage("Code Quality Analysis") {
+            steps{
+                script {
+                    gradle.sonarqube(version: GRADLE_V)
+                }
+            }
+        }
+        stage('Build & Push Image') {
+            steps {
+                script{
+                    dockerImage = docker.build config.DOCKER_REGISTRY + ":${env.BUILD_ID}"
+                    docker.withRegistry('',config.DOCKER_REGISTRY_CREDENTIALS) {
+                        dockerImage.push()
+                        sh "docker rmi config.DOCKER_REGISTRY:${env.BUILD_ID}"
+                    }
+                }
+            }
+        }
+        /*stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([azureServicePrincipal(AZ_K8S_KEY_ID)]) {
+                    sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
+                    sh 'az aks get-credentials --resource-group rg-devsu-dev-centralUs-001 --name aks-devsu-dev-centralUs-001 --subscription ae272f53-0ce5-4e22-9041-f236c379f851'
+                    sh 'kubectl apply -f ./kubernetes/api_deployment.yml -n nsdevsu-dev'
+                    sh 'kubectl rollout restart deployment/devsuprueba-dev -n nsdevsu-dev'
+                    sh 'sleep 10'
+                }                   
+            }
+        }*/
+        /*stage("Deploy") {
+            steps {
+                script {
+                    deploy.k8s(
+                        config: config.K8S_CONFIG_CID,
+                        registryServer: config.REGISTRY_SERVER,
+                        imageName: SERVICE_NAME,
+                        tag: IMAGE_TAG,
+                        profile: ENVIRONMENT,
+                        namespace: K8S_NAMESPACE,
+                        maxReplica: "2"
+                    )
+                }
+            }
+        }
+        stage('Deploy to APIM') {
+            steps {
+                script {
+                    sh 'az apim api import -g rg-devsu-dev-centralUs-001 --service-name apim-devsu-dev-centralUs-001 --subscription-key-header-name X-Parse-REST-API-Key --subscription-key-query-param-name subscription-key --api-id openapi-definition-dev --api-version dev --api-version-set-id 62ca714fb19f79aae4479f96 --path / --specification-url http://20.96.236.6/v3/api-docs.yaml --specification-format OpenApiJson'
+                }                   
+            }
+        }*/
+    }
+    post { 
+        always { 
+            cleanWs()
+        }
+    }
+}
