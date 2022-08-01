@@ -38,7 +38,7 @@ pipeline {
                 withCredentials([azureServicePrincipal(config.AZ_K8S_KEY)]) {
                     sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
                     sh 'az aks get-credentials --resource-group Devsu --name aksdevsucluster --subscription 6c26738b-b5d9-4cb1-985e-51558f10f375'
-                    sh 'kubectl apply -f ./k8s.yml'
+                    sh 'kubectl apply -f ./devops/k8s.yml'
                 }                   
             }
         }
